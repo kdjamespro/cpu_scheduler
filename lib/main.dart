@@ -39,6 +39,9 @@ class _MyHomePageState extends State<MyHomePage> {
     'Priority (Preemptive)',
     'Round Robin',
   ];
+
+  // TODO:  Add a controller that will handle when we change the algorithm
+
   RxString text = 'First Come First Serve'.obs;
   TableController controller = TableController();
 

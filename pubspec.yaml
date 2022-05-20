@@ -33,6 +33,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   pluto_grid: ^2.9.3
   get: ^4.6.1
+  equatable: ^2.0.3
 
 dev_dependencies:
   flutter_test:

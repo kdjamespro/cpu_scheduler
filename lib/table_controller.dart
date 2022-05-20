@@ -1,6 +1,9 @@
+import 'package:cpu_scheduler/models/scheduler.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:get/get.dart';
 import '/models/process.dart';
+// import 'package:collection/collection.dart' as col;
 
 class TableController {
   late PlutoGridStateManager? stateManager;
@@ -13,7 +16,7 @@ class TableController {
     processess.addAll(List.generate(
       3,
       (index) => PlutoRow(cells: {
-        'process_id': PlutoCell(value: 'P$index'),
+        'process_id': PlutoCell(value: 'P${index + 1}'),
         'arrival_time': PlutoCell(value: 0),
         'burst_time': PlutoCell(value: 0),
         'status': PlutoCell(value: 'saved'),
@@ -33,7 +36,7 @@ class TableController {
       final newRows = stateManager!.getNewRows(count: 1);
 
       for (var e in newRows) {
-        e.cells['process_id']!.value = 'P$processCount';
+        e.cells['process_id']!.value = 'P${processCount + 1}';
         e.cells['status']!.value = 'created';
       }
 
@@ -75,10 +78,12 @@ class TableController {
             burstTime: row.cells['burst_time']!.value));
       }
 
-      for (var proc in process) {
-        print(proc.pid);
-        print(proc.arrivalTime);
-      }
+      // Sort the processes by arrival time or priority
+      mergeSort(process);
+
+      Scheduler scheduler = Scheduler(processList: process);
+      // scheduler.fCFS();
+      scheduler.nonPreemptiveSJF();
     }
   }
 }
