@@ -1,8 +1,10 @@
 import 'package:cpu_scheduler/process_table.dart';
+import 'package:cpu_scheduler/services/warning_message.dart';
 import 'package:cpu_scheduler/table_controller.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
+import '/services/constants.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,16 +32,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  RxBool simulating = false.obs;
-  List<String> cpuSchedulingAlgo = [
-    'First Come First Serve',
-    'Shortest-Job-First (Non Preemptive)',
-    'Shortest-Job-First (Preemptive)',
-    'Priority (Non Preemptive)',
-    'Priority (Preemptive)',
-    'Round Robin',
-  ];
-
   // TODO:  Add a controller that will handle when we change the algorithm
 
   RxString text = 'First Come First Serve'.obs;
@@ -86,21 +78,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {},
                 ),
                 CommandBarButton(
-                  icon: Obx(() => simulating.isTrue
-                      ? const Icon(FluentIcons.stop)
-                      : const Icon(FluentIcons.play_solid)),
-                  label: Obx(
-                    () => simulating.isTrue
-                        ? const Text('Stop')
-                        : const Text('Start Scheduling Simulation'),
-                  ),
+                  icon: const Icon(FluentIcons.play_solid),
+                  label: const Text('Schedule'),
                   onPressed: () {
-                    if (simulating.isFalse) {
-                      simulating.value = true;
-                      controller.getData();
-                    } else {
-                      print('Stopped');
-                      simulating.value = false;
+                    bool success = controller.schedule(text.value);
+                    if (!success) {
+                      showWarningMessage(
+                          context: context,
+                          title: 'Uninitialized Burst Time',
+                          message:
+                              'Please make sure that there is no process with 0 burst time');
                     }
                   },
                 ),
@@ -112,75 +99,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class TestWidget extends StatelessWidget {
-  TestWidget({Key? key}) : super(key: key);
-
-  final rowData = [
-    {'id': '100', 'title': 'Flutter Basics', 'author': 'David John'},
-    {'id': '102', 'title': 'Git and GitHub', 'author': 'Merlin Nick'},
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return mat.DataTable(
-      columns: const <mat.DataColumn>[
-        mat.DataColumn(
-            label: Flexible(
-          child: Text("",
-              maxLines: 5,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontWeight: FontWeight.bold)),
-        )),
-        mat.DataColumn(
-            label: Expanded(
-          flex: 4,
-          child: Text("Nom de l'article",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontWeight: FontWeight.bold)),
-        )),
-      ],
-      rows: <mat.DataRow>[
-        const mat.DataRow(
-          cells: <mat.DataCell>[
-            mat.DataCell(mat.TextField(
-              decoration: mat.InputDecoration(
-                border: mat.OutlineInputBorder(),
-                hintText: 'Enter a search term',
-              ),
-            )),
-            mat.DataCell(mat.TextField(
-              decoration: mat.InputDecoration(
-                border: mat.OutlineInputBorder(),
-                hintText: 'Enter a search term',
-              ),
-            )),
-          ],
-        ),
-        const mat.DataRow(
-          cells: <mat.DataCell>[
-            mat.DataCell(mat.TextField(
-              decoration: mat.InputDecoration(
-                border: mat.OutlineInputBorder(),
-                hintText: 'Enter a search term',
-              ),
-            )),
-            mat.DataCell(Text('Hello')),
-          ],
-        ),
-        ...rowData
-            .map((item) => mat.DataRow(cells: [
-                  mat.DataCell(Text('#' + item['id'].toString())),
-                  mat.DataCell(Text(item['title'] ?? '')),
-                  // mat.DataCell(Text(item['author'] ?? '')),
-                  // const mat.DataCell(FlutterLogo())
-                ]))
-            .toList()
-      ],
     );
   }
 }

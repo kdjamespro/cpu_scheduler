@@ -1,8 +1,10 @@
 import 'package:cpu_scheduler/models/scheduler.dart';
+import 'package:cpu_scheduler/services/warning_message.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:get/get.dart';
 import '/models/process.dart';
+import '/services/constants.dart';
 // import 'package:collection/collection.dart' as col;
 
 class TableController {
@@ -19,7 +21,7 @@ class TableController {
         'process_id': PlutoCell(value: 'P${index + 1}'),
         'arrival_time': PlutoCell(value: 0),
         'burst_time': PlutoCell(value: 0),
-        'status': PlutoCell(value: 'saved'),
+        'priority': PlutoCell(value: 0),
       }),
     ));
     processCount += 3;
@@ -37,7 +39,6 @@ class TableController {
 
       for (var e in newRows) {
         e.cells['process_id']!.value = 'P${processCount + 1}';
-        e.cells['status']!.value = 'created';
       }
 
       stateManager!.appendRows(newRows);
@@ -65,25 +66,47 @@ class TableController {
     }
   }
 
-  void getData() {
+  bool schedule(String text) {
     if (stateManager == null) {
-      return;
+      return false;
     } else {
       List<Process> process = [];
-
+      bool abort = false;
+      for (var row in stateManager!.refRows) {
+        int val = row.cells['burst_time']!.value;
+        if (val == 0) {
+          abort = true;
+        }
+      }
+      if (abort) {
+        return false;
+      }
       for (var row in stateManager!.refRows) {
         process.add(Process(
-            pid: row.cells['process_id']!.value,
-            arrivalTime: row.cells['arrival_time']!.value,
-            burstTime: row.cells['burst_time']!.value));
+          pid: row.cells['process_id']!.value,
+          arrivalTime: row.cells['arrival_time']!.value,
+          burstTime: row.cells['burst_time']!.value,
+          priority: row.cells['priority']!.value,
+        ));
       }
 
       // Sort the processes by arrival time or priority
       mergeSort(process);
 
       Scheduler scheduler = Scheduler(processList: process);
-      // scheduler.fCFS();
-      scheduler.nonPreemptiveSJF();
+      if (text == cpuSchedulingAlgo[0]) {
+        scheduler.fCFS();
+      } else if (text == cpuSchedulingAlgo[1]) {
+        scheduler.nonPreemptiveSJF();
+      } else if (text == cpuSchedulingAlgo[2]) {
+        scheduler.preemptiveSJF();
+      } else if (text == cpuSchedulingAlgo[3]) {
+        scheduler.nonPreemptivePriority();
+      } else if (text == cpuSchedulingAlgo[4]) {
+        scheduler.preemptivePriority();
+      }
+
+      return true;
     }
   }
 }

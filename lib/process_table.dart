@@ -19,10 +19,6 @@ class _ProcessTableState extends State<ProcessTable> {
 
   late PlutoGridStateManager stateManager;
 
-  bool checkReadOnly(PlutoRow row, PlutoCell cell) {
-    return row.cells['status']!.value != 'created';
-  }
-
   @override
   void initState() {
     super.initState();
@@ -35,7 +31,6 @@ class _ProcessTableState extends State<ProcessTable> {
         type: PlutoColumnType.text(),
         enableColumnDrag: false,
         readOnly: true,
-        checkReadOnly: checkReadOnly,
         enableEditingMode: false,
         titleSpan: const TextSpan(children: [
           WidgetSpan(
@@ -60,41 +55,9 @@ class _ProcessTableState extends State<ProcessTable> {
       ),
       PlutoColumn(
         enableColumnDrag: false,
-        title: 'Status',
-        field: 'status',
-        type: PlutoColumnType.select(<String>[
-          'saved',
-          'edited',
-          'created',
-        ]),
-        enableEditingMode: false,
-        titleSpan: const TextSpan(children: [
-          WidgetSpan(
-              child: Icon(
-            FluentIcons.lock,
-            size: 17,
-          )),
-          TextSpan(text: 'Status'),
-        ]),
-        renderer: (rendererContext) {
-          Color textColor = Colors.black;
-
-          if (rendererContext.cell.value == 'saved') {
-            textColor = Colors.green;
-          } else if (rendererContext.cell.value == 'edited') {
-            textColor = Colors.red;
-          } else if (rendererContext.cell.value == 'created') {
-            textColor = Colors.blue;
-          }
-
-          return Text(
-            rendererContext.cell.value.toString(),
-            style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.bold,
-            ),
-          );
-        },
+        title: 'Priority',
+        field: 'priority',
+        type: PlutoColumnType.number(),
       ),
     ]);
 
@@ -108,11 +71,6 @@ class _ProcessTableState extends State<ProcessTable> {
       rows: rows,
       onChanged: (PlutoGridOnChangedEvent event) {
         print(event);
-
-        if (event.row!.cells['status']!.value == 'saved') {
-          event.row!.cells['status']!.value = 'edited';
-        }
-
         stateManager.notifyListeners();
       },
       onLoaded: (PlutoGridOnLoadedEvent event) {
@@ -150,31 +108,8 @@ class _HeaderState extends State<_Header> {
     widget.stateManager.setSelectingMode(gridSelectingMode);
   }
 
-  void handleAddColumns() {
-    final List<PlutoColumn> addedColumns = [];
-
-    for (var i = 0; i < addCount; i += 1) {
-      addedColumns.add(
-        PlutoColumn(
-          title: 'hello $addCount',
-          field: 'column${++addedCount}',
-          type: PlutoColumnType.text(),
-        ),
-      );
-    }
-
-    widget.stateManager.insertColumns(
-      widget.stateManager.bodyColumns.length,
-      addedColumns,
-    );
-  }
-
   void handleAddRows() {
     final newRows = widget.stateManager.getNewRows(count: addCount);
-
-    for (var e in newRows) {
-      e.cells['status']!.value = 'created';
-    }
 
     widget.stateManager.appendRows(newRows);
 
@@ -189,28 +124,6 @@ class _HeaderState extends State<_Header> {
     );
 
     widget.stateManager.setKeepFocus(true);
-  }
-
-  void handleSaveAll() {
-    widget.stateManager.setShowLoading(true);
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      for (var row in widget.stateManager.refRows) {
-        if (row.cells['status']!.value != 'saved') {
-          row.cells['status']!.value = 'saved';
-        }
-
-        if (row.cells['process_id']!.value == '') {
-          row.cells['process_id']!.value = 'guest';
-        }
-
-        if (row.cells['arrival_time']!.value == '') {
-          row.cells['arrival_time']!.value = 'anonymous';
-        }
-      }
-
-      widget.stateManager.setShowLoading(false);
-    });
   }
 
   void handleRemoveCurrentColumnButton() {
@@ -280,16 +193,8 @@ class _HeaderState extends State<_Header> {
               ),
             ),
             mat.ElevatedButton(
-              child: const Text('Add columns'),
-              onPressed: handleAddColumns,
-            ),
-            mat.ElevatedButton(
               child: const Text('Add rows'),
               onPressed: handleAddRows,
-            ),
-            mat.ElevatedButton(
-              child: const Text('Save all'),
-              onPressed: handleSaveAll,
             ),
             mat.ElevatedButton(
               child: const Text('Remove Current Column'),
