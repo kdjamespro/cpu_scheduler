@@ -116,6 +116,10 @@ class Scheduler {
         notYetArrived.remove(process);
       }
 
+      // Update the remaining time of the process. We then remove the process and add it back again to the queue to update the value
+      process.updateRemainingTime(process.remainingTime - 1);
+      queue.remove(process);
+
       // Check if the time corresponds to a process arrival time
       if (notYetArrived.map((p) => p.arrivalTime).toList().contains(time)) {
         // Catches multiple process arrivals given a specific time
@@ -143,8 +147,6 @@ class Scheduler {
         }
       }
 
-      process.updateRemainingTime(process.remainingTime - 1);
-      queue.remove(process);
       // Checks if the process already ended
       if (process.remainingTime == 0) {
         int turnAroundTime = time - process.arrivalTime;
@@ -154,6 +156,7 @@ class Scheduler {
         process.setTurnAroundTime(turnAroundTime);
         process.setWaitingTime(waitingTime);
         processCopy.remove(process);
+        queue.remove(process);
 
         if (queue.isNotEmpty && processCopy.isNotEmpty) {
           i = processCopy.indexOf(queue.first);
@@ -161,6 +164,7 @@ class Scheduler {
       } else {
         queue.add(process);
       }
+
       if (processCopy.isNotEmpty) {
         time += 1;
       }
@@ -199,6 +203,8 @@ class Scheduler {
         notYetArrived.remove(process);
       }
 
+      process.updateRemainingTime(process.remainingTime - 1);
+
       // Check if the time corresponds to a process arrival time
       if (notYetArrived.map((p) => p.arrivalTime).toList().contains(time)) {
         // Catches multiple process arrivals given a specific time
@@ -213,7 +219,6 @@ class Scheduler {
         }
       }
 
-      process.updateRemainingTime(process.remainingTime - 1);
       if (process.remainingTime == 0) {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
@@ -263,6 +268,8 @@ class Scheduler {
         notYetArrived.remove(process);
       }
 
+      process.updateRemainingTime(process.remainingTime - 1);
+
       // Check if the time corresponds to a process arrival time
       if (notYetArrived.map((p) => p.arrivalTime).toList().contains(time)) {
         // Catches multiple process arrivals given a specific time
@@ -290,7 +297,6 @@ class Scheduler {
         }
       }
 
-      process.updateRemainingTime(process.remainingTime - 1);
       if (process.remainingTime == 0) {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
@@ -340,6 +346,8 @@ class Scheduler {
         notYetArrived.remove(process);
       }
 
+      process.updateRemainingTime(process.remainingTime - 1);
+
       // Check if the time corresponds to a process arrival time
       if (notYetArrived.map((p) => p.arrivalTime).toList().contains(time)) {
         // Catches multiple process arrivals given a specific time
@@ -354,7 +362,6 @@ class Scheduler {
         }
       }
 
-      process.updateRemainingTime(process.remainingTime - 1);
       if (process.remainingTime == 0) {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
