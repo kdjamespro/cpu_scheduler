@@ -66,7 +66,7 @@ class TableController {
     }
   }
 
-  bool schedule(String text) {
+  bool schedule(String text, String timeQuantum) {
     if (stateManager == null) {
       return false;
     } else {
@@ -92,8 +92,14 @@ class TableController {
 
       // Sort the processes by arrival time or priority
       mergeSort(process);
+      int time = 1;
+      if (timeQuantum == '' || !GetUtils.isNum(timeQuantum)) {
+        time = 1;
+      } else {
+        time = int.parse(timeQuantum);
+      }
 
-      Scheduler scheduler = Scheduler(processList: process);
+      Scheduler scheduler = Scheduler(processList: process, timeQuantum: time);
       if (text == cpuSchedulingAlgo[0]) {
         scheduler.fCFS();
       } else if (text == cpuSchedulingAlgo[1]) {
@@ -104,6 +110,8 @@ class TableController {
         scheduler.nonPreemptivePriority();
       } else if (text == cpuSchedulingAlgo[4]) {
         scheduler.preemptivePriority();
+      } else if (text == cpuSchedulingAlgo[5]) {
+        scheduler.roundRobin();
       }
 
       return true;

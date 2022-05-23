@@ -32,10 +32,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // TODO:  Add a controller that will handle when we change the algorithm
-
   RxString text = 'First Come First Serve'.obs;
   TableController controller = TableController();
+  FlyoutController open = FlyoutController();
+  TextEditingController timeQuantum = TextEditingController();
+
+  @override
+  void initState() {
+    timeQuantum.text = '1';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,20 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             CommandBar(
               primaryItems: [
-                CommandBarButton(
-                  icon: const Icon(FluentIcons.add),
-                  label: const Text('Add Process'),
-                  onPressed: () {
-                    controller.addProcess();
-                  },
-                ),
-                CommandBarButton(
-                  icon: const Icon(FluentIcons.delete),
-                  label: const Text('Delete Process'),
-                  onPressed: () {
-                    controller.deleteProcess();
-                  },
-                ),
                 CommandBarButton(
                   icon: const Text('CPU Scheduling Algorithm'),
                   label: SizedBox(
@@ -78,10 +70,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {},
                 ),
                 CommandBarButton(
+                  icon: const Icon(FluentIcons.add),
+                  label: const Text('Add Process'),
+                  onPressed: () {
+                    controller.addProcess();
+                  },
+                ),
+                CommandBarButton(
+                  icon: const Icon(FluentIcons.delete),
+                  label: const Text('Delete Process'),
+                  onPressed: () {
+                    controller.deleteProcess();
+                  },
+                ),
+                CommandBarButton(
                   icon: const Icon(FluentIcons.play_solid),
                   label: const Text('Schedule'),
                   onPressed: () {
-                    bool success = controller.schedule(text.value);
+                    bool success =
+                        controller.schedule(text.value, timeQuantum.text);
                     if (!success) {
                       showWarningMessage(
                           context: context,
@@ -89,6 +96,37 @@ class _MyHomePageState extends State<MyHomePage> {
                           message:
                               'Please make sure that there is no process with 0 burst time');
                     }
+                  },
+                ),
+                CommandBarButton(
+                  icon: const Icon(FluentIcons.clock),
+                  label: Flyout(
+                      position: FlyoutPosition.below,
+                      placement: FlyoutPlacement.start,
+                      controller: open,
+                      child: const Text('Time Quantum'),
+                      content: (context) {
+                        return FlyoutContent(
+                          child: SizedBox(
+                            width: 50,
+                            child: TextFormBox(
+                                autovalidateMode: AutovalidateMode.always,
+                                controller: timeQuantum,
+                                onFieldSubmitted: (text) {
+                                  if (text == '') {
+                                    timeQuantum.text = '1';
+                                  }
+                                },
+                                validator: (input) {
+                                  if (input != null && !GetUtils.isNum(input)) {
+                                    timeQuantum.clear();
+                                  }
+                                }),
+                          ),
+                        );
+                      }),
+                  onPressed: () {
+                    open.open();
                   },
                 ),
               ],

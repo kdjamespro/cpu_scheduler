@@ -3,16 +3,18 @@ import 'package:collection/collection.dart';
 
 class Scheduler {
   late List<Process> _processList;
-  late int _completionTime;
+  late int _completionTime, _timeQuantum;
   late double _aveTurnAroundTime, _aveWaitingTime;
 
   Scheduler({
     required List<Process> processList,
+    required int timeQuantum,
   }) {
     _processList = processList;
     _completionTime = -1;
     _aveTurnAroundTime = -1;
     _aveWaitingTime = -1;
+    _timeQuantum = timeQuantum;
   }
 
   int get completionTime => _completionTime;
@@ -204,7 +206,7 @@ class Scheduler {
             .where((element) => element.arrivalTime == time)
             .toList();
 
-        // Checks the process with least amount of burst time.
+        // Adds the process that arrived to the queue
         for (Process arrived in arrivals) {
           queue.add(arrived);
           notYetArrived.remove(arrived);
@@ -303,6 +305,79 @@ class Scheduler {
           queue.sort(_compareByPriority);
           i = processCopy.indexOf(queue.first);
         }
+      }
+
+      if (processCopy.isNotEmpty) {
+        time += 1;
+      }
+    }
+
+    print(time);
+    _averageResults(time, _processList);
+    _printResults(processOrder);
+  }
+
+  void roundRobin() {
+    List<Process> processCopy = List.from(_processList);
+    List<Process> queue = [];
+    List<Process> processOrder = [];
+
+    // Tracks the processes that haven't arrived yet in the scheduler
+    List<Process> notYetArrived = List.from(processCopy);
+
+    int time = 1;
+    int i = processCopy.indexOf(processCopy.first);
+
+    while (processCopy.isNotEmpty) {
+      Process process = processCopy[i];
+      // Add the process if its not present in the queue
+      if (!queue.contains(process)) {
+        queue.add(process);
+      }
+
+      // Remove the process from the list when it arrive
+      if (notYetArrived.contains(process)) {
+        notYetArrived.remove(process);
+      }
+
+      // Check if the time corresponds to a process arrival time
+      if (notYetArrived.map((p) => p.arrivalTime).toList().contains(time)) {
+        // Catches multiple process arrivals given a specific time
+        List<Process> arrivals = notYetArrived
+            .where((element) => element.arrivalTime == time)
+            .toList();
+
+        // Adds the process that arrived to the queue
+        for (Process arrived in arrivals) {
+          queue.add(arrived);
+          notYetArrived.remove(arrived);
+        }
+      }
+
+      process.updateRemainingTime(process.remainingTime - 1);
+      if (process.remainingTime == 0) {
+        int turnAroundTime = time - process.arrivalTime;
+        int waitingTime = turnAroundTime - process.burstTime;
+
+        processOrder.add(process);
+        process.setTurnAroundTime(turnAroundTime);
+        process.setWaitingTime(waitingTime);
+        processCopy.remove(process);
+        queue.remove(process);
+
+        if (queue.isNotEmpty && processCopy.isNotEmpty) {
+          i = processCopy.indexOf(queue.first);
+        }
+      } else if (time % _timeQuantum == 0) {
+        processOrder.add(process);
+
+        // Remove the process from the list
+        queue.remove(process);
+
+        // Add the process again at the end of the list
+        queue.add(process);
+
+        i = processCopy.indexOf(queue.first);
       }
 
       if (processCopy.isNotEmpty) {
