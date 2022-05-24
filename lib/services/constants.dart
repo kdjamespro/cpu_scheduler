@@ -6,3 +6,12 @@ List<String> cpuSchedulingAlgo = [
   'Priority (Preemptive)',
   'Round Robin',
 ];
+
+List<String> diskSchedulingAlgo = [
+  'First Come First Serve',
+  'Shortest Seek Time First',
+  'SCAN',
+  'LOOK',
+  'CSCAN',
+  'CLOOK',
+];
