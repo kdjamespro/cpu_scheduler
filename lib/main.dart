@@ -1,4 +1,5 @@
 import 'package:cpu_scheduler/process_table.dart';
+import 'package:cpu_scheduler/disk_process_table.dart';
 import 'package:cpu_scheduler/services/warning_message.dart';
 import 'package:cpu_scheduler/table_controller.dart';
 import 'package:flutter/material.dart' as mat;
@@ -36,6 +37,7 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
   RxString text = 'First Come First Serve'.obs;
+  RxString text2 = 'Ascending'.obs;
   TableController controller = TableController();
   FlyoutController open = FlyoutController();
   TextEditingController timeQuantum = TextEditingController();
@@ -221,85 +223,129 @@ class _MyHomePageState extends State<MyHomePage>
                               ),
                             ],
                           ),
-                          child: CommandBar(
-                            primaryItems: [
-                              CommandBarButton(
-                                icon: const Text('Disk Scheduling Algorithm'),
-                                label: SizedBox(
-                                  width: 280,
-                                  child: DropDownButton(
-                                      title: Obx(() => Text(text.value)),
-                                      items: diskSchedulingAlgo
-                                          .map((algo) => MenuFlyoutItem(
-                                              text: Text(algo),
-                                              onPressed: () {
-                                                text.value = algo;
-                                              }))
-                                          .toList()),
-                                ),
-                                onPressed: () {},
+                          child: Column(
+                            children: [
+                              CommandBar(
+                                primaryItems: [
+                                  CommandBarButton(
+                                    icon:
+                                        const Text('Disk Scheduling Algorithm'),
+                                    label: SizedBox(
+                                      width: 280,
+                                      child: DropDownButton(
+                                          title: Obx(() => Text(text.value)),
+                                          items: diskSchedulingAlgo
+                                              .map((algo) => MenuFlyoutItem(
+                                                  text: Text(algo),
+                                                  onPressed: () {
+                                                    text.value = algo;
+                                                  }))
+                                              .toList()),
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                                  CommandBarButton(
+                                    icon: const Icon(FluentIcons.add),
+                                    label: const Text('Add Process'),
+                                    onPressed: () {
+                                      controller.addProcess();
+                                    },
+                                  ),
+                                  CommandBarButton(
+                                    icon: const Icon(FluentIcons.delete),
+                                    label: const Text('Delete Process'),
+                                    onPressed: () {
+                                      controller.deleteProcess();
+                                    },
+                                  ),
+                                  CommandBarButton(
+                                    icon: const Icon(FluentIcons.play_solid),
+                                    label: const Text('Schedule'),
+                                    onPressed: () {
+                                      bool success = controller.schedule(
+                                          text.value, timeQuantum.text);
+                                      if (!success) {
+                                        showWarningMessage(
+                                            context: context,
+                                            title: 'Uninitialized Burst Time',
+                                            message:
+                                                'Please make sure that there is no process with 0 burst time');
+                                      }
+                                    },
+                                  ),
+                                  CommandBarButton(
+                                    icon: const Icon(FluentIcons.clock),
+                                    label: Flyout(
+                                        position: FlyoutPosition.below,
+                                        placement: FlyoutPlacement.start,
+                                        controller: open,
+                                        child: const Text('Time Quantum'),
+                                        content: (context) {
+                                          return FlyoutContent(
+                                            child: SizedBox(
+                                              width: 50,
+                                              child: TextFormBox(
+                                                  autovalidateMode:
+                                                      AutovalidateMode.always,
+                                                  controller: timeQuantum,
+                                                  onFieldSubmitted: (text) {
+                                                    if (text == '') {
+                                                      timeQuantum.text = '1';
+                                                    }
+                                                  },
+                                                  validator: (input) {
+                                                    if (input != null &&
+                                                        !GetUtils.isNum(
+                                                            input)) {
+                                                      timeQuantum.clear();
+                                                    }
+                                                  }),
+                                            ),
+                                          );
+                                        }),
+                                    onPressed: () {
+                                      open.open();
+                                    },
+                                  ),
+                                ],
                               ),
-                              CommandBarButton(
-                                icon: const Icon(FluentIcons.add),
-                                label: const Text('Add Process'),
-                                onPressed: () {
-                                  controller.addProcess();
-                                },
-                              ),
-                              CommandBarButton(
-                                icon: const Icon(FluentIcons.delete),
-                                label: const Text('Delete Process'),
-                                onPressed: () {
-                                  controller.deleteProcess();
-                                },
-                              ),
-                              CommandBarButton(
-                                icon: const Icon(FluentIcons.play_solid),
-                                label: const Text('Schedule'),
-                                onPressed: () {
-                                  bool success = controller.schedule(
-                                      text.value, timeQuantum.text);
-                                  if (!success) {
-                                    showWarningMessage(
-                                        context: context,
-                                        title: 'Uninitialized Burst Time',
-                                        message:
-                                            'Please make sure that there is no process with 0 burst time');
-                                  }
-                                },
-                              ),
-                              CommandBarButton(
-                                icon: const Icon(FluentIcons.clock),
-                                label: Flyout(
-                                    position: FlyoutPosition.below,
-                                    placement: FlyoutPlacement.start,
-                                    controller: open,
-                                    child: const Text('Time Quantum'),
-                                    content: (context) {
-                                      return FlyoutContent(
-                                        child: SizedBox(
-                                          width: 50,
-                                          child: TextFormBox(
-                                              autovalidateMode:
-                                                  AutovalidateMode.always,
-                                              controller: timeQuantum,
-                                              onFieldSubmitted: (text) {
-                                                if (text == '') {
-                                                  timeQuantum.text = '1';
-                                                }
-                                              },
-                                              validator: (input) {
-                                                if (input != null &&
-                                                    !GetUtils.isNum(input)) {
-                                                  timeQuantum.clear();
-                                                }
-                                              }),
-                                        ),
-                                      );
-                                    }),
-                                onPressed: () {
-                                  open.open();
-                                },
+                              CommandBar(
+                                primaryItems: [
+                                  CommandBarButton(
+                                    icon: const Text('Current Position'),
+                                    label: SizedBox(
+                                      width: 40,
+                                      //height: 35,
+                                      child: TextFormField(),
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                                  CommandBarButton(
+                                    icon: const Text('Track Size'),
+                                    label: SizedBox(
+                                      width: 40,
+                                      //height: 35,
+                                      child: TextFormField(),
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                                  CommandBarButton(
+                                    icon: const Text('Direction'),
+                                    label: SizedBox(
+                                      width: 280,
+                                      child: DropDownButton(
+                                          title: Obx(() => Text(text2.value)),
+                                          items: directions
+                                              .map((algo) => MenuFlyoutItem(
+                                                  text: Text(algo),
+                                                  onPressed: () {
+                                                    text2.value = algo;
+                                                  }))
+                                              .toList()),
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -307,7 +353,7 @@ class _MyHomePageState extends State<MyHomePage>
                       ),
                       Expanded(
                           child: mat.Material(
-                              child: ProcessTable(controller: controller))),
+                              child: DiskProcessTable(controller: controller))),
                     ],
                   ),
                 ),

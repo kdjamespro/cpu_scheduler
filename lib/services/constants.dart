@@ -15,3 +15,8 @@ List<String> diskSchedulingAlgo = [
   'CSCAN',
   'CLOOK',
 ];
+
+List<String> directions = [
+  'Ascending',
+  'Descending',
+];
