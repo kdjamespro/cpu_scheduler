@@ -66,18 +66,93 @@ class _ProcessTableState extends State<ProcessTable> {
 
   @override
   Widget build(BuildContext context) {
-    return PlutoGrid(
-      columns: columns,
-      rows: rows,
-      onChanged: (PlutoGridOnChangedEvent event) {
-        print(event);
-        stateManager.notifyListeners();
-      },
-      onLoaded: (PlutoGridOnLoadedEvent event) {
-        controller.setStateManager(event.stateManager);
-        stateManager = event.stateManager;
-      },
-      // createHeader: (stateManager) => _Header(stateManager: stateManager),
+    return Container(
+      color: Color.fromARGB(255, 250, 250, 250),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: mat.EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 7,
+                      offset: Offset(0, 1), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: PlutoGrid(
+                  columns: columns,
+                  rows: rows,
+                  onChanged: (PlutoGridOnChangedEvent event) {
+                    print(event);
+                    stateManager.notifyListeners();
+                  },
+                  onLoaded: (PlutoGridOnLoadedEvent event) {
+                    controller.setStateManager(event.stateManager);
+                    stateManager = event.stateManager;
+                  },
+                  // createHeader: (stateManager) => _Header(stateManager: stateManager),
+                ),
+              ),
+            ),
+            Container(
+              width: 475,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.only(bottom: 4, left: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: Offset(0, 1), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      width: double.infinity,
+                      child: Center(child: mat.Text("Graph")),
+                    ),
+                  )),
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.only(top: 4, left: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: Offset(0, 1), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      width: double.infinity,
+                      child: Center(child: mat.Text("Computation")),
+                    ),
+                  )),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
