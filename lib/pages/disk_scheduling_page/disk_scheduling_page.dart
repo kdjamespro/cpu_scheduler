@@ -96,13 +96,13 @@ class _DiskSchedulingPageState extends State<DiskSchedulingPage> {
                               int diskSize = int.parse(trackSize.text);
                               bool success = diskController.schedule(
                                   text.value, currHead, diskSize, text2.value);
-                              // if (!success) {
-                              //   showWarningMessage(
-                              //       context: context,
-                              //       title: 'Uninitialized location',
-                              //       message:
-                              //           'Please make sure that there is no request with 0 burst time');
-                              // }
+                              if (!success) {
+                                showWarningMessage(
+                                    context: context,
+                                    title: 'Invalid Current Head Value',
+                                    message:
+                                        'Please make sure that the value for current position is between 0 and track size - 1');
+                              }
                             },
                           ),
                         ],

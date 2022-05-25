@@ -64,6 +64,8 @@ class DiskTableController {
   bool schedule(String text, int currentHead, int trackSize, String direction) {
     if (stateManager == null) {
       return false;
+    } else if (currentHead >= trackSize || currentHead < 0) {
+      return false;
     } else {
       stateManager!.moveScrollByRow(
         PlutoMoveDirection.down,
@@ -86,11 +88,7 @@ class DiskTableController {
       );
 
       if (text == diskSchedulingAlgo[0]) {
-        print(requests.length);
-        for (Request row in requests) {
-          print('ID: ${row.id} location: ${row.location}');
-        }
-        // scheduler.;
+        scheduler.fcfs();
       } else if (text == diskSchedulingAlgo[1]) {
         scheduler.sstf();
       } else if (text == diskSchedulingAlgo[2]) {

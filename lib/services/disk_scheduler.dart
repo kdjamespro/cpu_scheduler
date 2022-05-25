@@ -20,6 +20,26 @@ class DiskScheduler {
     direction == 'Ascending' ? _ascending = true : _ascending = false;
   }
 
+  void fcfs() {
+    int head = _startPosition;
+    int totalSeekTime = 0;
+    List<Request> requests = List.from(_requestList);
+
+    for (var request in requests) {
+      // Compute for the seek time for each request
+      totalSeekTime += (request.location - head).abs();
+      print('${request.location} - $head = ${(request.location - head).abs()}');
+
+      head = request.location;
+    }
+
+    _totalSeekTime = totalSeekTime;
+    _averageSeekTime = totalSeekTime / _requestList.length;
+
+    print(_totalSeekTime);
+    print(_averageSeekTime);
+  }
+
   void sstf() {
     List<Request> requests = List.from(_requestList);
     int head = _startPosition;
