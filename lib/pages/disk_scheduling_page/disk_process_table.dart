@@ -1,4 +1,3 @@
-import 'package:cpu_scheduler/controllers/table_controller.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
@@ -90,59 +89,56 @@ class _DiskProcessTableState extends State<DiskProcessTable> {
                 ),
               ),
             ),
-            Flexible(
-              flex: 1,
-              child: Container(
-                width: 475,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                        child: Padding(
-                      padding: const EdgeInsets.only(bottom: 4, left: 8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(12)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: const Offset(
-                                  0, 1), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        width: double.infinity,
-                        child: const Center(child: mat.Text("Graph")),
+            Container(
+              width: 475,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.only(bottom: 4, left: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: const Offset(
+                                0, 1), // changes position of shadow
+                          ),
+                        ],
                       ),
-                    )),
-                    Expanded(
-                        child: Padding(
-                      padding: const EdgeInsets.only(top: 4, left: 8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(12)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: const Offset(
-                                  0, 1), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        width: double.infinity,
-                        child: const Center(child: Text("Computation")),
+                      width: double.infinity,
+                      child: const Center(child: mat.Text("Graph")),
+                    ),
+                  )),
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.only(top: 4, left: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: const Offset(
+                                0, 1), // changes position of shadow
+                          ),
+                        ],
                       ),
-                    )),
-                  ],
-                ),
+                      width: double.infinity,
+                      child: const Center(child: Text("Computation")),
+                    ),
+                  )),
+                ],
               ),
             ),
           ],

@@ -34,13 +34,14 @@ class _DiskSchedulingPageState extends State<DiskSchedulingPage> {
                 child: mat.Container(
                   decoration: BoxDecoration(
                     color: mat.Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
                     boxShadow: [
                       BoxShadow(
                         color: mat.Colors.grey.withOpacity(0.1),
                         spreadRadius: 1,
                         blurRadius: 2,
-                        offset: Offset(0, 1), // changes position of shadow
+                        offset:
+                            const Offset(0, 1), // changes position of shadow
                       ),
                     ],
                   ),
