@@ -74,6 +74,7 @@ class DiskScheduler {
 
     List<Request> queue = [];
     int i = requests.indexWhere((element) => element.location >= head) - 1;
+
     if (_ascending) {
       diskEnd = _trackSize - 1;
       queue.addAll(requests.sublist(i + 1, requests.length));
@@ -181,7 +182,6 @@ class DiskScheduler {
     print(_averageSeekTime);
   }
 
-  // TODO: Implement Differenct Direction
   void look() {
     int head = _startPosition;
     int totalSeekTime = 0;
@@ -190,19 +190,22 @@ class DiskScheduler {
     // Sort the requests
     requests.sort();
 
-    print(requests);
-
     List<Request> queue = [];
     int i = requests.indexWhere((element) => element.location >= head) - 1;
-    queue.addAll(requests.sublist(i + 1, requests.length));
-    queue.addAll(requests.sublist(0, i + 1).reversed);
+    if (_ascending) {
+      queue.addAll(requests.sublist(i + 1, requests.length));
+      queue.addAll(requests.sublist(0, i + 1).reversed);
+    } else {
+      queue.addAll(requests.sublist(0, i + 1).reversed);
+      queue.addAll(requests.sublist(i + 1, requests.length));
+    }
 
-    print(queue);
-    for (var scan in queue) {
-      print((scan.location - head).abs());
+    for (var request in queue) {
       // Compute for the seek time for each request in queue
-      totalSeekTime += (scan.location - head).abs();
-      head = scan.location;
+      totalSeekTime += (request.location - head).abs();
+      print('${request.location} - $head = ${(request.location - head).abs()}');
+
+      head = request.location;
     }
 
     _totalSeekTime = totalSeekTime;
@@ -212,7 +215,6 @@ class DiskScheduler {
     print(_averageSeekTime);
   }
 
-  // TODO: Implement Differenct Direction
   void cLook() {
     int head = _startPosition;
     int totalSeekTime = 0;
@@ -226,15 +228,21 @@ class DiskScheduler {
     List<Request> queue = [];
 
     int i = requests.indexWhere((element) => element.location >= head) - 1;
-    queue.addAll(requests.sublist(i + 1, requests.length));
-    queue.addAll(requests.sublist(0, i + 1));
 
-    print(queue);
-    for (var scan in queue) {
-      print((scan.location - head).abs());
+    if (_ascending) {
+      queue.addAll(requests.sublist(i + 1, requests.length));
+      queue.addAll(requests.sublist(0, i + 1));
+    } else {
+      queue.addAll(requests.sublist(0, i + 1).reversed);
+      queue.addAll(requests.sublist(i + 1, requests.length).reversed);
+    }
+
+    for (var request in queue) {
       // Compute for the seek time for each request in queue
-      totalSeekTime += (scan.location - head).abs();
-      head = scan.location;
+      totalSeekTime += (request.location - head).abs();
+      print('${request.location} - $head = ${(request.location - head).abs()}');
+
+      head = request.location;
     }
 
     _totalSeekTime = totalSeekTime;
