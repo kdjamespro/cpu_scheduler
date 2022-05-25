@@ -17,6 +17,15 @@ class _DiskSchedulingPageState extends State<DiskSchedulingPage> {
   RxString text = 'First Come First Serve'.obs;
   RxString text2 = 'Ascending'.obs;
   DiskTableController diskController = DiskTableController();
+  TextEditingController currentPosition = TextEditingController();
+  TextEditingController trackSize = TextEditingController();
+
+  @override
+  void initState() {
+    currentPosition.text = '50';
+    trackSize.text = '200';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,14 +92,17 @@ class _DiskSchedulingPageState extends State<DiskSchedulingPage> {
                             icon: const Icon(FluentIcons.play_solid),
                             label: const Text('Schedule'),
                             onPressed: () {
-                              bool success = diskController.schedule('', '');
-                              if (!success) {
-                                showWarningMessage(
-                                    context: context,
-                                    title: 'Uninitialized Burst Time',
-                                    message:
-                                        'Please make sure that there is no process with 0 burst time');
-                              }
+                              int currHead = int.parse(currentPosition.text);
+                              int diskSize = int.parse(trackSize.text);
+                              bool success = diskController.schedule(
+                                  text.value, currHead, diskSize, text2.value);
+                              // if (!success) {
+                              //   showWarningMessage(
+                              //       context: context,
+                              //       title: 'Uninitialized location',
+                              //       message:
+                              //           'Please make sure that there is no request with 0 burst time');
+                              // }
                             },
                           ),
                         ],
@@ -102,18 +114,42 @@ class _DiskSchedulingPageState extends State<DiskSchedulingPage> {
                             label: SizedBox(
                               width: 40,
                               //height: 35,
-                              child: TextFormBox(),
+                              child: TextFormBox(
+                                  controller: currentPosition,
+                                  autovalidateMode: AutovalidateMode.always,
+                                  validator: (input) {
+                                    if (input != null &&
+                                        !GetUtils.isNum(input)) {
+                                      currentPosition.clear();
+                                    }
+                                  }),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              if (currentPosition.text == '') {
+                                currentPosition.text = '50';
+                              }
+                            },
                           ),
                           CommandBarButton(
                             icon: const Text('Track Size'),
                             label: SizedBox(
                               width: 40,
                               //height: 35,
-                              child: TextFormBox(),
+                              child: TextFormBox(
+                                  controller: trackSize,
+                                  autovalidateMode: AutovalidateMode.always,
+                                  validator: (input) {
+                                    if (input != null &&
+                                        !GetUtils.isNum(input)) {
+                                      trackSize.clear();
+                                    }
+                                  }),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              if (trackSize.text == '') {
+                                trackSize.text = '200';
+                              }
+                            },
                           ),
                           CommandBarButton(
                             icon: const Text('Direction'),

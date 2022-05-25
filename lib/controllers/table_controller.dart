@@ -1,4 +1,4 @@
-import 'package:cpu_scheduler/models/scheduler.dart';
+import 'package:cpu_scheduler/services/scheduler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:get/get.dart';

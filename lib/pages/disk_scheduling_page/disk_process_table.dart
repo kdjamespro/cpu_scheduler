@@ -78,8 +78,9 @@ class _DiskProcessTableState extends State<DiskProcessTable> {
                 child: PlutoGrid(
                   columns: columns,
                   rows: rows,
+                  configuration: const PlutoGridConfiguration(
+                      enterKeyAction: PlutoGridEnterKeyAction.toggleEditing),
                   onChanged: (PlutoGridOnChangedEvent event) {
-                    print(event);
                     stateManager.notifyListeners();
                   },
                   onLoaded: (PlutoGridOnLoadedEvent event) {

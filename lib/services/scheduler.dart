@@ -25,7 +25,12 @@ class Scheduler {
   void fCFS() {
     int time = 0;
     for (Process process in _processList) {
-      int waitingTime = time - process.arrivalTime;
+      int waitingTime = 0;
+      if (process == _processList.first) {
+        waitingTime = 0;
+      } else {
+        waitingTime = time - process.arrivalTime;
+      }
       time += process.burstTime;
       int turnAroundTime = waitingTime + process.burstTime;
       int responseTime = waitingTime;
