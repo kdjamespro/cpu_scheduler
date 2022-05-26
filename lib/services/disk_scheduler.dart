@@ -20,6 +20,9 @@ class DiskScheduler {
     direction == 'Ascending' ? _ascending = true : _ascending = false;
   }
 
+  int get totalSeekTime => _totalSeekTime;
+  double get averageSeekTime => _averageSeekTime;
+
   void fcfs() {
     int head = _startPosition;
     int totalSeekTime = 0;

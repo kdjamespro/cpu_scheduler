@@ -1,3 +1,4 @@
+import 'package:cpu_scheduler/controllers/disk_results_controller.dart';
 import 'package:cpu_scheduler/services/disk_scheduler.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:get/get.dart';
@@ -8,8 +9,10 @@ class DiskTableController {
   late PlutoGridStateManager? stateManager;
   late List<PlutoRow> requests;
   late int requestCount;
+  late DiskResultsController results;
 
-  DiskTableController() {
+  DiskTableController(DiskResultsController resultsController) {
+    results = resultsController;
     requests = <PlutoRow>[].obs;
     requestCount = 0;
     requests.addAll(List.generate(
@@ -100,6 +103,8 @@ class DiskTableController {
       } else if (text == diskSchedulingAlgo[5]) {
         scheduler.cLook();
       }
+
+      results.setResults(scheduler.totalSeekTime, scheduler.averageSeekTime);
       return true;
     }
   }

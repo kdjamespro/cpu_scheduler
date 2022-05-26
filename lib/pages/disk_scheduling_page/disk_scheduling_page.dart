@@ -1,3 +1,4 @@
+import 'package:cpu_scheduler/controllers/disk_results_controller.dart';
 import 'package:cpu_scheduler/controllers/disk_table_controller.dart';
 import 'package:cpu_scheduler/pages/disk_scheduling_page/disk_process_table.dart';
 import 'package:cpu_scheduler/services/warning_message.dart';
@@ -16,12 +17,15 @@ class DiskSchedulingPage extends StatefulWidget {
 class _DiskSchedulingPageState extends State<DiskSchedulingPage> {
   RxString text = 'First Come First Serve'.obs;
   RxString text2 = 'Ascending'.obs;
-  DiskTableController diskController = DiskTableController();
+  late DiskTableController diskController;
+  late DiskResultsController results;
   TextEditingController currentPosition = TextEditingController();
   TextEditingController trackSize = TextEditingController();
 
   @override
   void initState() {
+    results = DiskResultsController();
+    diskController = DiskTableController(results);
     currentPosition.text = '50';
     trackSize.text = '200';
     super.initState();
@@ -175,7 +179,10 @@ class _DiskSchedulingPageState extends State<DiskSchedulingPage> {
               ),
               Expanded(
                   child: mat.Material(
-                      child: DiskProcessTable(controller: diskController))),
+                      child: DiskProcessTable(
+                controller: diskController,
+                results: results,
+              ))),
             ],
           ),
         ),

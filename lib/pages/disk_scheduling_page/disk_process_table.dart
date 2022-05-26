@@ -1,12 +1,16 @@
+import 'package:cpu_scheduler/controllers/disk_results_controller.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
 import '../../controllers/disk_table_controller.dart';
 
 class DiskProcessTable extends StatefulWidget {
-  const DiskProcessTable({Key? key, required this.controller})
+  const DiskProcessTable(
+      {Key? key, required this.controller, required this.results})
       : super(key: key);
   final DiskTableController controller;
+  final DiskResultsController results;
   @override
   State<DiskProcessTable> createState() => _DiskProcessTableState();
 }
@@ -136,7 +140,23 @@ class _DiskProcessTableState extends State<DiskProcessTable> {
                         ],
                       ),
                       width: double.infinity,
-                      child: const Center(child: Text("Computation")),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Obx((() => Text(
+                                'Total Seek Time: ${widget.results.totalSeekTime}',
+                                style: FluentTheme.of(context)
+                                    .typography
+                                    .bodyStrong,
+                              ))),
+                          Obx((() => Text(
+                                'Average Seek Time: ${widget.results.averageSeekTime}',
+                                style: FluentTheme.of(context)
+                                    .typography
+                                    .bodyStrong,
+                              ))),
+                        ],
+                      ),
                     ),
                   )),
                 ],

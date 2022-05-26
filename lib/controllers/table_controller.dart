@@ -1,3 +1,4 @@
+import 'package:cpu_scheduler/controllers/cpu_results_controller.dart';
 import 'package:cpu_scheduler/services/scheduler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -10,8 +11,10 @@ class TableController {
   late PlutoGridStateManager? stateManager;
   late List<PlutoRow> processess;
   late int processCount;
+  late CpuResultsController resultsController;
 
-  TableController() {
+  TableController(CpuResultsController results) {
+    resultsController = results;
     processess = <PlutoRow>[].obs;
     processCount = 0;
     processess.addAll(List.generate(
@@ -98,7 +101,10 @@ class TableController {
         time = int.parse(timeQuantum);
       }
 
-      Scheduler scheduler = Scheduler(processList: process, timeQuantum: time);
+      Scheduler scheduler = Scheduler(
+          processList: process,
+          timeQuantum: time,
+          controller: resultsController);
       if (text == cpuSchedulingAlgo[0]) {
         scheduler.fCFS();
       } else if (text == cpuSchedulingAlgo[1]) {

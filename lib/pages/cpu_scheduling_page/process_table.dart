@@ -1,12 +1,17 @@
+import 'package:cpu_scheduler/controllers/cpu_results_controller.dart';
 import 'package:cpu_scheduler/controllers/table_controller.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
 import '../../controllers/table_controller.dart';
+import 'package:get/get.dart';
 
 class ProcessTable extends StatefulWidget {
-  const ProcessTable({Key? key, required this.controller}) : super(key: key);
+  const ProcessTable(
+      {Key? key, required this.controller, required this.results})
+      : super(key: key);
   final TableController controller;
+  final CpuResultsController results;
   @override
   State<ProcessTable> createState() => _ProcessTableState();
 }
@@ -148,7 +153,29 @@ class _ProcessTableState extends State<ProcessTable> {
                         ],
                       ),
                       width: double.infinity,
-                      child: const Center(child: mat.Text("Computation")),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Obx((() => Text(
+                                'Completion Time: ${widget.results.completionTime}',
+                                style: FluentTheme.of(context)
+                                    .typography
+                                    .bodyStrong,
+                              ))),
+                          Obx((() => Text(
+                                'Average Turn Around Time: ${widget.results.averageTurnAroundTime}',
+                                style: FluentTheme.of(context)
+                                    .typography
+                                    .bodyStrong,
+                              ))),
+                          Obx((() => Text(
+                                'Average Waiting Time: ${widget.results.averageWaitingTime}',
+                                style: FluentTheme.of(context)
+                                    .typography
+                                    .bodyStrong,
+                              ))),
+                        ],
+                      ),
                     ),
                   )),
                 ],

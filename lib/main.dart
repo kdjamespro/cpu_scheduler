@@ -35,16 +35,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
-  RxString text = 'First Come First Serve'.obs;
-  RxString text2 = 'Ascending'.obs;
-  TableController controller = TableController();
-  FlyoutController open = FlyoutController();
-  TextEditingController timeQuantum = TextEditingController();
-  DiskTableController diskController = DiskTableController();
 
   @override
   void initState() {
-    timeQuantum.text = '1';
     super.initState();
     _controller = mat.TabController(length: 2, vsync: this);
   }
@@ -57,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage>
         appBar: mat.TabBar(
           controller: _controller,
           tabs: const [
-            mat.Padding(
+            Padding(
               padding: mat.EdgeInsets.all(12.0),
               child: mat.Text(
                 "CPU Scheduling",

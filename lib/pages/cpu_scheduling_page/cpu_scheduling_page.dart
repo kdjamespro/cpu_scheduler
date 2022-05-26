@@ -1,3 +1,4 @@
+import 'package:cpu_scheduler/controllers/cpu_results_controller.dart';
 import 'package:cpu_scheduler/pages/cpu_scheduling_page/process_table.dart';
 import 'package:cpu_scheduler/services/warning_message.dart';
 import 'package:cpu_scheduler/controllers/table_controller.dart';
@@ -15,12 +16,15 @@ class CpuSchedulingPage extends StatefulWidget {
 
 class _CpuSchedulingPageState extends State<CpuSchedulingPage> {
   RxString text = 'First Come First Serve'.obs;
-  TableController controller = TableController();
+  late TableController controller;
+  late CpuResultsController results;
   FlyoutController open = FlyoutController();
   TextEditingController timeQuantum = TextEditingController();
 
   @override
   void initState() {
+    results = CpuResultsController();
+    controller = TableController(results);
     timeQuantum.text = '1';
     super.initState();
   }
@@ -136,7 +140,10 @@ class _CpuSchedulingPageState extends State<CpuSchedulingPage> {
               ),
               Expanded(
                   child: mat.Material(
-                      child: ProcessTable(controller: controller))),
+                      child: ProcessTable(
+                controller: controller,
+                results: results,
+              ))),
             ],
           ),
         ),

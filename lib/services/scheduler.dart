@@ -1,3 +1,4 @@
+import 'package:cpu_scheduler/controllers/cpu_results_controller.dart';
 import 'package:cpu_scheduler/models/process.dart';
 import 'package:collection/collection.dart';
 
@@ -5,11 +6,13 @@ class Scheduler {
   late List<Process> _processList;
   late int _completionTime, _timeQuantum;
   late double _aveTurnAroundTime, _aveWaitingTime;
+  late CpuResultsController results;
 
-  Scheduler({
-    required List<Process> processList,
-    required int timeQuantum,
-  }) {
+  Scheduler(
+      {required List<Process> processList,
+      required int timeQuantum,
+      required CpuResultsController controller}) {
+    results = controller;
     _processList = processList;
     _completionTime = -1;
     _aveTurnAroundTime = -1;
@@ -40,8 +43,11 @@ class Scheduler {
       process.setTurnAroundTime(turnAroundTime);
       process.setResponseTime(responseTime);
     }
+
+    _completionTime = time;
     _averageResults(time, _processList);
     _printResults(_processList);
+    results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
   }
 
   void nonPreemptiveSJF() {
@@ -88,8 +94,10 @@ class Scheduler {
       }
     }
 
+    _completionTime = time;
     _averageResults(time, processOrder);
     _printResults(processOrder);
+    results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
   }
 
   void preemptiveSJF() {
@@ -174,10 +182,11 @@ class Scheduler {
         time += 1;
       }
     }
-    print(time);
+    _completionTime = time;
     _printProcessInfo();
     _averageResults(time, _processList);
     _printResults(processOrder);
+    results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
   }
 
 // For priority algorithms, lower priority value = higher priority
@@ -244,6 +253,10 @@ class Scheduler {
         time += 1;
       }
     }
+    _completionTime = time;
+    _averageResults(time, _processList);
+    _printResults(processOrder);
+    results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
   }
 
   void preemptivePriority() {
@@ -323,9 +336,10 @@ class Scheduler {
       }
     }
 
-    print(time);
+    _completionTime = time;
     _averageResults(time, _processList);
     _printResults(processOrder);
+    results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
   }
 
   void roundRobin() {
@@ -397,9 +411,11 @@ class Scheduler {
       }
     }
 
+    _completionTime = time;
     print(time);
     _averageResults(time, _processList);
     _printResults(processOrder);
+    results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
   }
 
   int _compareByBurstTime(Process p0, Process p1) {
