@@ -121,32 +121,38 @@ class _ProcessTableState extends State<ProcessTable> {
                   Expanded(
                       child: Padding(
                     padding: const EdgeInsets.only(bottom: 4, left: 8),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(12)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: const Offset(
-                                  0, 1), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: SingleChildScrollView(
-                          controller: _scrollController,
-                          scrollDirection: Axis.horizontal,
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height,
-                            width: MediaQuery.of(context).size.width,
-                            child: Center(
-                              child: Obx(
-                                () => Row(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: const Offset(
+                                0, 1), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        child: Obx(
+                          () => Scrollbar(
+                            controller: _scrollController,
+                            child: ScrollConfiguration(
+                              behavior: ScrollConfiguration.of(context)
+                                  .copyWith(dragDevices: {
+                                PointerDeviceKind.touch,
+                                PointerDeviceKind.mouse,
+                              }),
+                              child: SingleChildScrollView(
+                                controller: _scrollController,
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: widget
                                             .results.processOrder.isNotEmpty
                                         ? List.generate(
@@ -158,59 +164,56 @@ class _ProcessTableState extends State<ProcessTable> {
                                             double factor = ((element.endTime -
                                                         element.startTime)
                                                     .abs() /
-                                                widget.results.completionTime
-                                                    .value);
+                                                3);
                                             if (factor < 0.1) {
                                               factor += 0.03;
                                             } else if (factor > 0.2) {
-                                              factor -= 0.1;
+                                              factor = 0.1;
                                             }
                                             double width = factor *
                                                 (MediaQuery.of(context)
                                                         .size
                                                         .width /
-                                                    1.4);
-                                            return Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      height: 48,
-                                                      width: width,
-                                                      color:
-                                                          element.displayColor,
-                                                      child: Center(
-                                                        child: Text(
-                                                          element.pid,
-                                                          style: FluentTheme.of(
-                                                                  context)
-                                                              .typography
-                                                              .bodyStrong!
-                                                              .copyWith(
-                                                                  color: element
-                                                                      .fontColor),
-                                                        ),
+                                                    2);
+                                            return Container(
+                                              height: 200,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    height: 48,
+                                                    width: width,
+                                                    color: element.displayColor,
+                                                    child: Center(
+                                                      child: Text(
+                                                        element.pid,
+                                                        style: FluentTheme.of(
+                                                                context)
+                                                            .typography
+                                                            .bodyStrong!
+                                                            .copyWith(
+                                                                color: element
+                                                                    .fontColor),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                                Container(
-                                                  height: 24,
-                                                  width: width,
-                                                  child: Row(children: [
-                                                    index > 0
-                                                        ? const SizedBox()
-                                                        : Text(
-                                                            '${element.startTime}'),
-                                                    const Spacer(),
-                                                    Text('${element.endTime}')
-                                                  ]),
-                                                ),
-                                              ],
+                                                  ),
+                                                  Container(
+                                                    height: 24,
+                                                    width: width,
+                                                    child: Row(children: [
+                                                      index > 0
+                                                          ? const SizedBox()
+                                                          : Text(
+                                                              '${element.startTime}'),
+                                                      const Spacer(),
+                                                      Text('${element.endTime}')
+                                                    ]),
+                                                  ),
+                                                ],
+                                              ),
                                             );
                                           })
                                         : []),
