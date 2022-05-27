@@ -1,6 +1,7 @@
 import 'package:cpu_scheduler/controllers/cpu_results_controller.dart';
 import 'package:cpu_scheduler/controllers/table_controller.dart';
 import 'package:cpu_scheduler/models/process_duration.dart';
+import 'package:flutter/gestures.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
@@ -120,81 +121,100 @@ class _ProcessTableState extends State<ProcessTable> {
                   Expanded(
                       child: Padding(
                     padding: const EdgeInsets.only(bottom: 4, left: 8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 2,
-                            offset: const Offset(
-                                0, 1), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      width: double.infinity,
-                      child: SizedBox(
-                        height: 32,
-                        child: Center(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            controller: _scrollController,
-                            child: Obx(
-                              () => Row(
-                                  children: widget
-                                          .results.processOrder.isNotEmpty
-                                      ? List.generate(
-                                          widget.results.processOrder.length,
-                                          (index) {
-                                          ProcessDuration element = widget
-                                              .results.processOrder
-                                              .elementAt(index);
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    height: 48,
-                                                    width: 80,
-                                                    color: element.displayColor,
-                                                    child: Center(
-                                                      child: Text(
-                                                        element.pid,
-                                                        style: FluentTheme.of(
-                                                                context)
-                                                            .typography
-                                                            .bodyStrong!
-                                                            .copyWith(
-                                                                color: element
-                                                                    .fontColor),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: const Offset(
+                                  0, 1), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width,
+                            child: Center(
+                              child: Obx(
+                                () => Row(
+                                    children: widget
+                                            .results.processOrder.isNotEmpty
+                                        ? List.generate(
+                                            widget.results.processOrder.length,
+                                            (index) {
+                                            ProcessDuration element = widget
+                                                .results.processOrder
+                                                .elementAt(index);
+                                            double factor = ((element.endTime -
+                                                        element.startTime)
+                                                    .abs() /
+                                                widget.results.completionTime
+                                                    .value);
+                                            if (factor < 0.1) {
+                                              factor += 0.03;
+                                            } else if (factor > 0.2) {
+                                              factor -= 0.1;
+                                            }
+                                            double width = factor *
+                                                (MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    1.4);
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      height: 48,
+                                                      width: width,
+                                                      color:
+                                                          element.displayColor,
+                                                      child: Center(
+                                                        child: Text(
+                                                          element.pid,
+                                                          style: FluentTheme.of(
+                                                                  context)
+                                                              .typography
+                                                              .bodyStrong!
+                                                              .copyWith(
+                                                                  color: element
+                                                                      .fontColor),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Container(
-                                                height: 24,
-                                                width: 80,
-                                                child: Row(children: [
-                                                  index > 0
-                                                      ? const SizedBox()
-                                                      : Text(
-                                                          '${element.startTime}'),
-                                                  const Spacer(),
-                                                  Text('${element.endTime}')
-                                                ]),
-                                              ),
-                                            ],
-                                          );
-                                        })
-                                      : []),
+                                                  ],
+                                                ),
+                                                Container(
+                                                  height: 24,
+                                                  width: width,
+                                                  child: Row(children: [
+                                                    index > 0
+                                                        ? const SizedBox()
+                                                        : Text(
+                                                            '${element.startTime}'),
+                                                    const Spacer(),
+                                                    Text('${element.endTime}')
+                                                  ]),
+                                                ),
+                                              ],
+                                            );
+                                          })
+                                        : []),
+                              ),
                             ),
                           ),
                         ),
