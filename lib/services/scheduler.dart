@@ -22,7 +22,7 @@ class Scheduler {
 
   int get completionTime => _completionTime;
   double get aveTurnAroundTime => _aveTurnAroundTime;
-  double get aveWaitingTime => _aveTurnAroundTime;
+  double get aveWaitingTime => _aveWaitingTime;
   List<Process> get processList => _processList;
 
   void fCFS() {

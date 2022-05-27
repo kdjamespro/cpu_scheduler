@@ -24,6 +24,7 @@ class _ProcessTableState extends State<ProcessTable> {
 
   late PlutoGridStateManager stateManager;
 
+
   @override
   void initState() {
     super.initState();
@@ -72,7 +73,7 @@ class _ProcessTableState extends State<ProcessTable> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color.fromARGB(255, 250, 250, 250),
+      color: (Colors.white),
       child: Padding(
         padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 10),
         child: Row(
@@ -131,7 +132,7 @@ class _ProcessTableState extends State<ProcessTable> {
                         ],
                       ),
                       width: double.infinity,
-                      child: Center(child: mat.Text("Graph")),
+                      child: Center(child: mat.Text("Graphxd")),
                     ),
                   )),
                   Expanded(
