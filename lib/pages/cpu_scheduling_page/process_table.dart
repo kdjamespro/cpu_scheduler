@@ -1,5 +1,6 @@
 import 'package:cpu_scheduler/controllers/cpu_results_controller.dart';
 import 'package:cpu_scheduler/controllers/table_controller.dart';
+import 'package:cpu_scheduler/models/process_duration.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
@@ -19,14 +20,15 @@ class ProcessTable extends StatefulWidget {
 class _ProcessTableState extends State<ProcessTable> {
   final List<PlutoColumn> columns = [];
   late TableController controller;
+  late ScrollController _scrollController;
 
   late List<PlutoRow> rows;
 
   late PlutoGridStateManager stateManager;
 
-
   @override
   void initState() {
+    _scrollController = ScrollController();
     super.initState();
     controller = widget.controller;
     columns.addAll([
@@ -96,6 +98,8 @@ class _ProcessTableState extends State<ProcessTable> {
                 child: PlutoGrid(
                   columns: columns,
                   rows: rows,
+                  configuration: const PlutoGridConfiguration(
+                      enterKeyAction: PlutoGridEnterKeyAction.toggleEditing),
                   onChanged: (PlutoGridOnChangedEvent event) {
                     print(event);
                     stateManager.notifyListeners();
@@ -132,7 +136,69 @@ class _ProcessTableState extends State<ProcessTable> {
                         ],
                       ),
                       width: double.infinity,
-                      child: Center(child: mat.Text("Graph")),
+                      child: SizedBox(
+                        height: 32,
+                        child: Center(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            controller: _scrollController,
+                            child: Obx(
+                              () => Row(
+                                  children: widget
+                                          .results.processOrder.isNotEmpty
+                                      ? List.generate(
+                                          widget.results.processOrder.length,
+                                          (index) {
+                                          ProcessDuration element = widget
+                                              .results.processOrder
+                                              .elementAt(index);
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    height: 48,
+                                                    width: 80,
+                                                    color: element.displayColor,
+                                                    child: Center(
+                                                      child: Text(
+                                                        element.pid,
+                                                        style: FluentTheme.of(
+                                                                context)
+                                                            .typography
+                                                            .bodyStrong!
+                                                            .copyWith(
+                                                                color: element
+                                                                    .fontColor),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Container(
+                                                height: 24,
+                                                width: 80,
+                                                child: Row(children: [
+                                                  index > 0
+                                                      ? const SizedBox()
+                                                      : Text(
+                                                          '${element.startTime}'),
+                                                  const Spacer(),
+                                                  Text('${element.endTime}')
+                                                ]),
+                                              ),
+                                            ],
+                                          );
+                                        })
+                                      : []),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   )),
                   Expanded(

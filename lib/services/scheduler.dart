@@ -1,6 +1,7 @@
 import 'package:cpu_scheduler/controllers/cpu_results_controller.dart';
 import 'package:cpu_scheduler/models/process.dart';
 import 'package:collection/collection.dart';
+import 'package:cpu_scheduler/models/process_duration.dart';
 
 class Scheduler {
   late List<Process> _processList;
@@ -26,9 +27,14 @@ class Scheduler {
   List<Process> get processList => _processList;
 
   void fCFS() {
-    int time = 0;
+    List<ProcessDuration> processOrder = [];
+
+    int time = _processList.first.arrivalTime;
+    int startTime = time;
+
     for (Process process in _processList) {
       int waitingTime = 0;
+      startTime = time;
       if (process == _processList.first) {
         waitingTime = 0;
       } else {
@@ -38,6 +44,8 @@ class Scheduler {
       int turnAroundTime = waitingTime + process.burstTime;
       int responseTime = waitingTime;
 
+      processOrder.add(ProcessDuration(
+          pid: process.pid, startTime: startTime, endTime: time));
       // Save the results in the process object
       process.setWaitingTime(waitingTime);
       process.setTurnAroundTime(turnAroundTime);
@@ -47,14 +55,17 @@ class Scheduler {
     _completionTime = time;
     _averageResults(time, _processList);
     _printResults(_processList);
+    results.setOrder(processOrder);
     results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
   }
 
   void nonPreemptiveSJF() {
-    int time = 0;
     List<Process> processCopy = List.from(_processList);
-    List<Process> processOrder = [];
+    List<ProcessDuration> processOrder = [];
+    List<Process> orderCopy = [];
 
+    int time = processCopy.first.arrivalTime;
+    int startTime = time;
     // locates the process with lowest burstTime
     int i = processCopy.indexOf(processCopy.firstWhere(
         (element) =>
@@ -64,13 +75,20 @@ class Scheduler {
 
     while (processCopy.isNotEmpty) {
       Process process = processCopy[i];
-      processOrder.add(process);
+      startTime = time;
+      orderCopy.add(process);
 
       // Compute for the following time
       int waitingTime = time - process.arrivalTime;
       time += process.burstTime;
       int turnAroundTime = waitingTime + process.burstTime;
       int responseTime = waitingTime;
+
+      processOrder.add(ProcessDuration(
+        pid: process.pid,
+        startTime: startTime,
+        endTime: time,
+      ));
 
       // Save the results in the process object
       process.setWaitingTime(waitingTime);
@@ -95,16 +113,20 @@ class Scheduler {
     }
 
     _completionTime = time;
-    _averageResults(time, processOrder);
-    _printResults(processOrder);
+    _averageResults(time, orderCopy);
+    _printResults(orderCopy);
     results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
+    results.setOrder(processOrder);
   }
 
   void preemptiveSJF() {
-    int time = 1;
     List<Process> processCopy = List.from(_processList);
     PriorityQueue<Process> queue = PriorityQueue(_compareByRemainingTime);
-    List<Process> processOrder = [];
+    List<Process> orderCopy = [];
+    List<ProcessDuration> processOrder = [];
+
+    int time = processCopy.first.arrivalTime + 1;
+    int startTime = time - 1;
 
     // Tracks the processes that haven't arrived yet in the scheduler
     List<Process> notYetArrived = List.from(processCopy);
@@ -155,7 +177,11 @@ class Scheduler {
         }
 
         if (process.remainingTime > earliestArrival.remainingTime) {
-          processOrder.add(process);
+          processOrder.add(ProcessDuration(
+              pid: process.pid, startTime: startTime, endTime: time));
+          startTime = time + 1;
+
+          orderCopy.add(process);
           i = processCopy.indexOf(earliestArrival);
         }
       }
@@ -165,7 +191,11 @@ class Scheduler {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
 
-        processOrder.add(process);
+        processOrder.add(ProcessDuration(
+            pid: process.pid, startTime: startTime, endTime: time));
+        startTime = time + 1;
+
+        orderCopy.add(process);
         process.setTurnAroundTime(turnAroundTime);
         process.setWaitingTime(waitingTime);
         processCopy.remove(process);
@@ -185,20 +215,24 @@ class Scheduler {
     _completionTime = time;
     _printProcessInfo();
     _averageResults(time, _processList);
-    _printResults(processOrder);
+    _printResults(orderCopy);
     results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
+    results.setOrder(processOrder);
   }
 
 // For priority algorithms, lower priority value = higher priority
   void nonPreemptivePriority() {
     List<Process> processCopy = List.from(_processList);
     List<Process> queue = [];
-    List<Process> processOrder = [];
+    List<Process> orderCopy = [];
+    List<ProcessDuration> processOrder = [];
 
     // Tracks the processes that haven't arrived yet in the scheduler
     List<Process> notYetArrived = List.from(processCopy);
 
-    int time = 1;
+    int time = processCopy.first.arrivalTime + 1;
+    int startTime = time - 1;
+
     int i = processCopy.indexOf(processCopy.firstWhere(
         (element) =>
             element.arrivalTime == processCopy.first.arrivalTime &&
@@ -237,7 +271,11 @@ class Scheduler {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
 
-        processOrder.add(process);
+        processOrder.add(ProcessDuration(
+            pid: process.pid, startTime: startTime, endTime: time));
+        startTime = time + 1;
+
+        orderCopy.add(process);
         process.setTurnAroundTime(turnAroundTime);
         process.setWaitingTime(waitingTime);
         processCopy.remove(process);
@@ -255,19 +293,23 @@ class Scheduler {
     }
     _completionTime = time;
     _averageResults(time, _processList);
-    _printResults(processOrder);
+    _printResults(orderCopy);
     results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
+    results.setOrder(processOrder);
   }
 
   void preemptivePriority() {
     List<Process> processCopy = List.from(_processList);
     List<Process> queue = [];
-    List<Process> processOrder = [];
+    List<Process> orderCopy = [];
+    List<ProcessDuration> processOrder = [];
 
     // Tracks the processes that haven't arrived yet in the scheduler
     List<Process> notYetArrived = List.from(processCopy);
 
-    int time = 1;
+    int time = processCopy.first.arrivalTime + 1;
+    int startTime = time - 1;
+
     int i = processCopy.indexOf(processCopy.firstWhere(
         (element) =>
             element.arrivalTime == processCopy.first.arrivalTime &&
@@ -310,7 +352,11 @@ class Scheduler {
         }
 
         if (process.priority > priorityProcess.priority) {
-          processOrder.add(process);
+          processOrder.add(ProcessDuration(
+              pid: process.pid, startTime: startTime, endTime: time));
+          startTime = time + 1;
+
+          orderCopy.add(process);
           i = processCopy.indexOf(priorityProcess);
         }
       }
@@ -319,7 +365,11 @@ class Scheduler {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
 
-        processOrder.add(process);
+        processOrder.add(ProcessDuration(
+            pid: process.pid, startTime: startTime, endTime: time));
+        startTime = time + 1;
+
+        orderCopy.add(process);
         process.setTurnAroundTime(turnAroundTime);
         process.setWaitingTime(waitingTime);
         processCopy.remove(process);
@@ -338,19 +388,23 @@ class Scheduler {
 
     _completionTime = time;
     _averageResults(time, _processList);
-    _printResults(processOrder);
+    _printResults(orderCopy);
     results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
+    results.setOrder(processOrder);
   }
 
   void roundRobin() {
     List<Process> processCopy = List.from(_processList);
     List<Process> queue = [];
-    List<Process> processOrder = [];
+    List<Process> orderCopy = [];
+    List<ProcessDuration> processOrder = [];
 
     // Tracks the processes that haven't arrived yet in the scheduler
     List<Process> notYetArrived = List.from(processCopy);
 
-    int time = 1;
+    int time = processCopy.first.arrivalTime + 1;
+    int startTime = time - 1;
+
     int i = processCopy.indexOf(processCopy.first);
 
     while (processCopy.isNotEmpty) {
@@ -385,7 +439,11 @@ class Scheduler {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
 
-        processOrder.add(process);
+        processOrder.add(ProcessDuration(
+            pid: process.pid, startTime: startTime, endTime: time));
+        startTime = time + 1;
+
+        orderCopy.add(process);
         process.setTurnAroundTime(turnAroundTime);
         process.setWaitingTime(waitingTime);
         processCopy.remove(process);
@@ -395,7 +453,11 @@ class Scheduler {
           i = processCopy.indexOf(queue.first);
         }
       } else if (time % _timeQuantum == 0) {
-        processOrder.add(process);
+        processOrder.add(ProcessDuration(
+            pid: process.pid, startTime: startTime, endTime: time));
+        startTime = time + 1;
+
+        orderCopy.add(process);
 
         // Remove the process from the list
         queue.remove(process);
@@ -414,8 +476,9 @@ class Scheduler {
     _completionTime = time;
     print(time);
     _averageResults(time, _processList);
-    _printResults(processOrder);
+    _printResults(orderCopy);
     results.setResults(_completionTime, _aveTurnAroundTime, aveWaitingTime);
+    results.setOrder(processOrder);
   }
 
   int _compareByBurstTime(Process p0, Process p1) {

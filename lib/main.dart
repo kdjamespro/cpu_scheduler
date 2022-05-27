@@ -1,7 +1,5 @@
-import 'package:cpu_scheduler/controllers/disk_table_controller.dart';
 import 'package:cpu_scheduler/pages/cpu_scheduling_page/cpu_scheduling_page.dart';
 import 'package:cpu_scheduler/pages/disk_scheduling_page/disk_scheduling_page.dart';
-import 'package:cpu_scheduler/controllers/table_controller.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
