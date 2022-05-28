@@ -104,7 +104,9 @@ class DiskTableController {
         scheduler.cLook();
       }
 
-      results.setResults(scheduler.totalSeekTime, scheduler.averageSeekTime);
+      results.setResults(scheduler.totalSeekTime, scheduler.averageSeekTime,
+          scheduler.accessOrder);
+      results.setTrackRange(0, trackSize - 1);
       return true;
     }
   }

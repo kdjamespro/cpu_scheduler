@@ -123,61 +123,56 @@ class _DiskProcessTableState extends State<DiskProcessTable> {
                       child: mat.RotatedBox(
                         quarterTurns: 1,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 30, horizontal: 20),
-                          child: LineChart(
-                            LineChartData(
-                                minX: 0,
-                                maxX: 20,
-                                minY: 0,
-                                maxY: 200,
-                                titlesData: LineTitles.getTitleData(),
-                                gridData: FlGridData(show: false),
-                                //To show and customize the grid lines
-                                // gridData: FlGridData(
-                                //   show: True,
-                                //   getDrawingHorizontalLine: (value) {
-                                //     return FlLine(
-                                //       color: const Color(0xff37434d),
-                                //       strokeWidth: 1,
-                                //     );
-                                //   },
-                                //   drawVerticalLine: true,
-                                //   getDrawingVerticalLine: (value) {
-                                //     return FlLine(
-                                //       color: const Color(0xff37434d),
-                                //       strokeWidth: 1,
-                                //     );
-                                //   },
-                                // ),
-                                borderData: FlBorderData(
-                                  show: true,
-                                ),
-                                lineBarsData: [
-                                  LineChartBarData(
-                                    spots: [
-                                      FlSpot(0, 12),
-                                      FlSpot(1, 12),
-                                      FlSpot(2, 56),
-                                      FlSpot(3, 14),
-                                      FlSpot(4, 65),
-                                      FlSpot(5, 34),
-                                      FlSpot(6, 23),
-                                      FlSpot(7, 12),
-                                      FlSpot(8, 12),
-                                      FlSpot(9, 45),
-                                      FlSpot(10, 23),
-                                      FlSpot(11, 12),
-                                    ],
-                                    // isCurved: true,
-                                    color: Color(0xff23b6e6),
-                                    // belowBarData: BarAreaData(
-                                    //     spotsLine: BarAreaSpotsLine(show: false)),
-                                    barWidth: 2,
-                                  ),
-                                ]),
-                          ),
-                        ),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 30, horizontal: 20),
+                            child: Obx(
+                              () => LineChart(
+                                LineChartData(
+                                    minX: 0,
+                                    maxX: widget.results.accessOrder.length
+                                        .toDouble(),
+                                    minY: widget.results.trackStart.value,
+                                    maxY: widget.results.trackEnd.value,
+                                    titlesData: LineTitles.getTitleData(),
+                                    gridData: FlGridData(show: false),
+                                    //To show and customize the grid lines
+                                    // gridData: FlGridData(
+                                    //   show: True,
+                                    //   getDrawingHorizontalLine: (value) {
+                                    //     return FlLine(
+                                    //       color: const Color(0xff37434d),
+                                    //       strokeWidth: 1,
+                                    //     );
+                                    //   },
+                                    //   drawVerticalLine: true,
+                                    //   getDrawingVerticalLine: (value) {
+                                    //     return FlLine(
+                                    //       color: const Color(0xff37434d),
+                                    //       strokeWidth: 1,
+                                    //     );
+                                    //   },
+                                    // ),
+                                    borderData: FlBorderData(
+                                      show: true,
+                                    ),
+                                    lineBarsData: [
+                                      LineChartBarData(
+                                        spots: List.generate(
+                                            widget.results.accessOrder.length,
+                                            (index) => FlSpot(
+                                                index.toDouble(),
+                                                widget.results.accessOrder
+                                                    .elementAt(index)
+                                                    .toDouble())),
+                                        // isCurved: true,
+                                        color: const Color(0xff23b6e6),
+                                        // belowBarData: BarAreaData(
+                                        //     spotsLine: BarAreaSpotsLine(show: false)),
+                                        barWidth: 2,
+                                      ),
+                                    ]),
+                              ),
+                            )),
                       ),
                     ),
                   )),
