@@ -404,6 +404,7 @@ class Scheduler {
 
     int time = processCopy.first.arrivalTime + 1;
     int startTime = time - 1;
+    int timeElapsed = 1;
 
     int i = processCopy.indexOf(processCopy.first);
 
@@ -452,7 +453,8 @@ class Scheduler {
         if (queue.isNotEmpty && processCopy.isNotEmpty) {
           i = processCopy.indexOf(queue.first);
         }
-      } else if (time % _timeQuantum == 0) {
+      } else if (timeElapsed % _timeQuantum == 0) {
+        timeElapsed = 0;
         processOrder.add(ProcessDuration(
             pid: process.pid, startTime: startTime, endTime: time));
         startTime = time + 1;
@@ -470,6 +472,7 @@ class Scheduler {
 
       if (processCopy.isNotEmpty) {
         time += 1;
+        timeElapsed += 1;
       }
     }
 
