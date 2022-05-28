@@ -1,6 +1,6 @@
 # cpu_scheduler
 
-A new Flutter project.
+- [Web Demo](https://kdjamespro.github.io/cpu_scheduler/#/)
 
 ## Getting Started
 
