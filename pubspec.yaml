@@ -35,6 +35,9 @@ dependencies:
   get: ^4.6.1
   equatable: ^2.0.3
   horizontal_list: ^0.0.5
+  syncfusion_flutter_charts: ^20.1.57
+  fl_chart: ^0.50.6
+  flutter_phoenix: "^1.0.0"
 
 dev_dependencies:
   flutter_test:

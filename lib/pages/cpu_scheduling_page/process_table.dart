@@ -148,75 +148,88 @@ class _ProcessTableState extends State<ProcessTable> {
                                 PointerDeviceKind.touch,
                                 PointerDeviceKind.mouse,
                               }),
-                              child: SingleChildScrollView(
-                                controller: _scrollController,
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: widget
-                                            .results.processOrder.isNotEmpty
-                                        ? List.generate(
-                                            widget.results.processOrder.length,
-                                            (index) {
-                                            ProcessDuration element = widget
-                                                .results.processOrder
-                                                .elementAt(index);
-                                            double factor = ((element.endTime -
-                                                        element.startTime)
-                                                    .abs() /
-                                                3);
-                                            if (factor < 0.1) {
-                                              factor += 0.03;
-                                            } else if (factor > 0.2) {
-                                              factor = 0.1;
-                                            }
-                                            double width = factor *
-                                                (MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    2);
-                                            return Container(
-                                              height: 200,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    height: 48,
-                                                    width: width,
-                                                    color: element.displayColor,
-                                                    child: Center(
-                                                      child: Text(
-                                                        element.pid,
-                                                        style: FluentTheme.of(
-                                                                context)
-                                                            .typography
-                                                            .bodyStrong!
-                                                            .copyWith(
-                                                                color: element
-                                                                    .fontColor),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Center(
+                                  child: SingleChildScrollView(
+                                    controller: _scrollController,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: widget
+                                                .results.processOrder.isNotEmpty
+                                            ? List.generate(
+                                                widget.results.processOrder
+                                                    .length, (index) {
+                                                ProcessDuration element = widget
+                                                    .results.processOrder
+                                                    .elementAt(index);
+                                                double factor = ((element
+                                                                .endTime -
+                                                            element.startTime)
+                                                        .abs() /
+                                                    3);
+                                                if (factor < 0.1) {
+                                                  factor += 0.03;
+                                                } else if (factor > 0.2) {
+                                                  factor = 0.1;
+                                                }
+                                                double width = factor *
+                                                    (MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        2);
+                                                return Container(
+                                                  height: 200,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Container(
+                                                        height: 48,
+                                                        width: width,
+                                                        color: element
+                                                            .displayColor,
+                                                        child: Center(
+                                                          child: Text(
+                                                            element.pid,
+                                                            style: FluentTheme
+                                                                    .of(context)
+                                                                .typography
+                                                                .bodyStrong!
+                                                                .copyWith(
+                                                                    color: element
+                                                                        .fontColor),
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ),
+                                                      Container(
+                                                        height: 24,
+                                                        width: width,
+                                                        child: Row(children: [
+                                                          index > 0
+                                                              ? const SizedBox()
+                                                              : Text(
+                                                                  '${element.startTime}'),
+                                                          const Spacer(),
+                                                          Text(
+                                                              '${element.endTime}')
+                                                        ]),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Container(
-                                                    height: 24,
-                                                    width: width,
-                                                    child: Row(children: [
-                                                      index > 0
-                                                          ? const SizedBox()
-                                                          : Text(
-                                                              '${element.startTime}'),
-                                                      const Spacer(),
-                                                      Text('${element.endTime}')
-                                                    ]),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          })
-                                        : []),
+                                                );
+                                              })
+                                            : []),
+                                  ),
+                                ),
                               ),
                             ),
                           ),

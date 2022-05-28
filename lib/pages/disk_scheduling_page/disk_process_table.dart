@@ -4,6 +4,9 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
 import '../../controllers/disk_table_controller.dart';
+import 'package:fl_chart/fl_chart.dart';
+
+import 'line_titles.dart';
 
 class DiskProcessTable extends StatefulWidget {
   const DiskProcessTable(
@@ -64,38 +67,36 @@ class _DiskProcessTableState extends State<DiskProcessTable> {
         padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 10),
         child: Row(
           children: [
-            Expanded(
-              child: Container(
-                padding: const mat.EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.all(Radius.circular(12)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 7,
-                      offset: const Offset(0, 1), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: PlutoGrid(
-                  columns: columns,
-                  rows: rows,
-                  configuration: const PlutoGridConfiguration(
-                      enterKeyAction: PlutoGridEnterKeyAction.toggleEditing),
-                  onChanged: (PlutoGridOnChangedEvent event) {
-                    stateManager.notifyListeners();
-                  },
-                  onLoaded: (PlutoGridOnLoadedEvent event) {
-                    controller.setStateManager(event.stateManager);
-                    stateManager = event.stateManager;
-                  },
-                ),
+            Container(
+              width: 500,
+              padding: const mat.EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 7,
+                    offset: const Offset(0, 1), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: PlutoGrid(
+                columns: columns,
+                rows: rows,
+                configuration: const PlutoGridConfiguration(
+                    enterKeyAction: PlutoGridEnterKeyAction.toggleEditing),
+                onChanged: (PlutoGridOnChangedEvent event) {
+                  stateManager.notifyListeners();
+                },
+                onLoaded: (PlutoGridOnLoadedEvent event) {
+                  controller.setStateManager(event.stateManager);
+                  stateManager = event.stateManager;
+                },
               ),
             ),
-            Container(
-              width: 475,
+            Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -117,12 +118,70 @@ class _DiskProcessTableState extends State<DiskProcessTable> {
                           ),
                         ],
                       ),
-                      width: double.infinity,
-                      child: const Center(child: mat.Text("Graph")),
+                      //HERE LIES THE GRAPH
+                      // child: const Center(child: mat.Text("Graph")),
+                      child: mat.RotatedBox(
+                        quarterTurns: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 30, horizontal: 20),
+                          child: LineChart(
+                            LineChartData(
+                                minX: 0,
+                                maxX: 20,
+                                minY: 0,
+                                maxY: 200,
+                                titlesData: LineTitles.getTitleData(),
+                                gridData: FlGridData(show: false),
+                                //To show and customize the grid lines
+                                // gridData: FlGridData(
+                                //   show: True,
+                                //   getDrawingHorizontalLine: (value) {
+                                //     return FlLine(
+                                //       color: const Color(0xff37434d),
+                                //       strokeWidth: 1,
+                                //     );
+                                //   },
+                                //   drawVerticalLine: true,
+                                //   getDrawingVerticalLine: (value) {
+                                //     return FlLine(
+                                //       color: const Color(0xff37434d),
+                                //       strokeWidth: 1,
+                                //     );
+                                //   },
+                                // ),
+                                borderData: FlBorderData(
+                                  show: true,
+                                ),
+                                lineBarsData: [
+                                  LineChartBarData(
+                                    spots: [
+                                      FlSpot(0, 12),
+                                      FlSpot(1, 12),
+                                      FlSpot(2, 56),
+                                      FlSpot(3, 14),
+                                      FlSpot(4, 65),
+                                      FlSpot(5, 34),
+                                      FlSpot(6, 23),
+                                      FlSpot(7, 12),
+                                      FlSpot(8, 12),
+                                      FlSpot(9, 45),
+                                      FlSpot(10, 23),
+                                      FlSpot(11, 12),
+                                    ],
+                                    // isCurved: true,
+                                    color: Color(0xff23b6e6),
+                                    // belowBarData: BarAreaData(
+                                    //     spotsLine: BarAreaSpotsLine(show: false)),
+                                    barWidth: 2,
+                                  ),
+                                ]),
+                          ),
+                        ),
+                      ),
                     ),
                   )),
-                  Expanded(
-                      child: Padding(
+                  Padding(
                     padding: const EdgeInsets.only(top: 4, left: 8),
                     child: Container(
                       decoration: BoxDecoration(
@@ -140,25 +199,28 @@ class _DiskProcessTableState extends State<DiskProcessTable> {
                         ],
                       ),
                       width: double.infinity,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Obx((() => Text(
-                                'Total Seek Time: ${widget.results.totalSeekTime}',
-                                style: FluentTheme.of(context)
-                                    .typography
-                                    .bodyStrong,
-                              ))),
-                          Obx((() => Text(
-                                'Average Seek Time: ${widget.results.averageSeekTime}',
-                                style: FluentTheme.of(context)
-                                    .typography
-                                    .bodyStrong,
-                              ))),
-                        ],
+                      child: Container(
+                        height: 70,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Obx((() => Text(
+                                  'Total Seek Time: ${widget.results.totalSeekTime}',
+                                  style: FluentTheme.of(context)
+                                      .typography
+                                      .bodyStrong,
+                                ))),
+                            Obx((() => Text(
+                                  'Average Seek Time: ${widget.results.averageSeekTime}',
+                                  style: FluentTheme.of(context)
+                                      .typography
+                                      .bodyStrong,
+                                ))),
+                          ],
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ),
