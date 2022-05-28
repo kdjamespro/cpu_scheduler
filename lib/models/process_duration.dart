@@ -9,8 +9,11 @@ class ProcessDuration {
   late Color fontColor;
 
   ProcessDuration(
-      {required this.pid, required this.startTime, required this.endTime}) {
-    displayColor = _randomColor();
+      {required this.pid,
+      required this.startTime,
+      required this.endTime,
+      Color? color}) {
+    displayColor = color ?? _randomColor();
     fontColor = _determineFontColor(displayColor);
   }
 

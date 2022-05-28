@@ -44,8 +44,7 @@ class Scheduler {
       int turnAroundTime = waitingTime + process.burstTime;
       int responseTime = waitingTime;
 
-      processOrder.add(ProcessDuration(
-          pid: process.pid, startTime: startTime, endTime: time));
+      _addProcessOrder(processOrder, process.pid, startTime, time);
       // Save the results in the process object
       process.setWaitingTime(waitingTime);
       process.setTurnAroundTime(turnAroundTime);
@@ -84,11 +83,7 @@ class Scheduler {
       int turnAroundTime = waitingTime + process.burstTime;
       int responseTime = waitingTime;
 
-      processOrder.add(ProcessDuration(
-        pid: process.pid,
-        startTime: startTime,
-        endTime: time,
-      ));
+      _addProcessOrder(processOrder, process.pid, startTime, time);
 
       // Save the results in the process object
       process.setWaitingTime(waitingTime);
@@ -177,9 +172,7 @@ class Scheduler {
         }
 
         if (process.remainingTime > earliestArrival.remainingTime) {
-          processOrder.add(ProcessDuration(
-              pid: process.pid, startTime: startTime, endTime: time));
-          startTime = time + 1;
+          _addProcessOrder(processOrder, process.pid, startTime, time);
 
           orderCopy.add(process);
           i = processCopy.indexOf(earliestArrival);
@@ -191,8 +184,7 @@ class Scheduler {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
 
-        processOrder.add(ProcessDuration(
-            pid: process.pid, startTime: startTime, endTime: time));
+        _addProcessOrder(processOrder, process.pid, startTime, time);
         startTime = time + 1;
 
         orderCopy.add(process);
@@ -271,8 +263,7 @@ class Scheduler {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
 
-        processOrder.add(ProcessDuration(
-            pid: process.pid, startTime: startTime, endTime: time));
+        _addProcessOrder(processOrder, process.pid, startTime, time);
         startTime = time + 1;
 
         orderCopy.add(process);
@@ -352,8 +343,7 @@ class Scheduler {
         }
 
         if (process.priority > priorityProcess.priority) {
-          processOrder.add(ProcessDuration(
-              pid: process.pid, startTime: startTime, endTime: time));
+          _addProcessOrder(processOrder, process.pid, startTime, time);
           startTime = time + 1;
 
           orderCopy.add(process);
@@ -365,8 +355,7 @@ class Scheduler {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
 
-        processOrder.add(ProcessDuration(
-            pid: process.pid, startTime: startTime, endTime: time));
+        _addProcessOrder(processOrder, process.pid, startTime, time);
         startTime = time + 1;
 
         orderCopy.add(process);
@@ -440,8 +429,7 @@ class Scheduler {
         int turnAroundTime = time - process.arrivalTime;
         int waitingTime = turnAroundTime - process.burstTime;
 
-        processOrder.add(ProcessDuration(
-            pid: process.pid, startTime: startTime, endTime: time));
+        _addProcessOrder(processOrder, process.pid, startTime, time);
         startTime = time + 1;
 
         orderCopy.add(process);
@@ -455,8 +443,7 @@ class Scheduler {
         }
       } else if (timeElapsed % _timeQuantum == 0) {
         timeElapsed = 0;
-        processOrder.add(ProcessDuration(
-            pid: process.pid, startTime: startTime, endTime: time));
+        _addProcessOrder(processOrder, process.pid, startTime, time);
         startTime = time + 1;
 
         orderCopy.add(process);
@@ -541,5 +528,22 @@ class Scheduler {
     }
     print(
         'Summary: Ave TurnaroundTime : $_aveTurnAroundTime Ave WaitingTime: $_aveWaitingTime');
+  }
+
+  void _addProcessOrder(List<ProcessDuration> processOrder, String pid,
+      int startTime, int endTime) {
+    bool contains = false;
+    int i = processOrder.indexWhere((element) => element.pid == pid);
+
+    if (i >= 0) {
+      processOrder.add(ProcessDuration(
+          pid: pid,
+          startTime: startTime,
+          endTime: endTime,
+          color: processOrder[i].displayColor));
+    } else {
+      processOrder.add(
+          ProcessDuration(pid: pid, startTime: startTime, endTime: endTime));
+    }
   }
 }
