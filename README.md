@@ -1,6 +1,6 @@
 # cpu_scheduler
 
-- [Web Demo](https://flutter.dev/docs/get-started/codelab](https://kdjamespro.github.io/cpu_scheduler/#/)
+- [Web Demo](https://kdjamespro.github.io/cpu_scheduler/#/)
 
 ## Getting Started
 
